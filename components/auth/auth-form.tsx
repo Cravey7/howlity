@@ -28,28 +28,44 @@ export function AuthForm({ type }: AuthFormProps) {
 
     try {
       if (type === 'sign-up') {
-        const { error } = await supabase.auth.signUp({
+        // Sign up with Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${location.origin}/auth/callback`,
           },
         })
-        if (error) throw error
+
+        if (authError) throw authError
+
+        // The trigger will automatically create the user record
+        console.log('Sign up successful:', { user: authData.user?.email })
       } else {
+        console.log('Attempting sign in with:', { email })
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
         
         if (error) {
-          console.error('Sign in error:', error)
+          console.error('Sign in error details:', {
+            message: error.message,
+            status: error.status,
+            name: error.name
+          })
           throw error
         }
 
         if (!data?.session) {
+          console.error('No session data received')
           throw new Error('No session returned after sign in')
         }
+
+        console.log('Sign in successful:', { 
+          user: data.user?.email,
+          session: !!data.session 
+        })
       }
       
       router.refresh()
