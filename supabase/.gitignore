@@ -1,0 +1,23 @@
+# Supabase
+**/supabase/.temp
+**/supabase/.env
+**/supabase/.env.*
+!**/supabase/.env.example
+
+# Database
+**/supabase/seed.sql
+**/supabase/seed.sql.*
+
+# TypeScript
+**/supabase/functions/**/*.js
+**/supabase/functions/**/*.js.map
+**/supabase/functions/**/*.d.ts
+
+# Logs
+**/supabase/logs
+**/supabase/logs.*
+
+# Local development
+**/supabase/.temp
+**/supabase/.env.local
+**/supabase/.env.*.local 
