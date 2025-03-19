@@ -1,3 +1,12 @@
+export function hasEnvVars() {
+  const requiredEnvVars = [
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  ] as const
+
+  return requiredEnvVars.every((envVar) => process.env[envVar])
+}
+
 export function checkEnvVars() {
   const requiredEnvVars = [
     'NEXT_PUBLIC_SUPABASE_URL',
