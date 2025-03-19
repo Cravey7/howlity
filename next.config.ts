@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
       allowedOrigins: ['localhost:3000', 'howlity.vercel.app'],
     },
   },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
 };
 
 export default nextConfig;
