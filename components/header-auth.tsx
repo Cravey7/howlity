@@ -12,7 +12,7 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!hasEnvVars) {
+  if (!hasEnvVars()) {
     return (
       <>
         <div className="flex gap-4 items-center">
