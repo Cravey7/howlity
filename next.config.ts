@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
     domains: ['pmzuujsmvspggdfaftaf.supabase.co'],
   },
   experimental: {
-    serverActions: true,
+    serverActions: {
+      allowedOrigins: ['localhost:3000', 'howlity.vercel.app'],
+    },
   },
 };
 
