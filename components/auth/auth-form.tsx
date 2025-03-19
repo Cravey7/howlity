@@ -37,15 +37,30 @@ export function AuthForm({ type }: AuthFormProps) {
         })
         if (error) throw error
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
-        if (error) throw error
+        
+        if (error) {
+          console.error('Sign in error:', error)
+          throw error
+        }
+
+        if (!data?.session) {
+          throw new Error('No session returned after sign in')
+        }
       }
+      
       router.refresh()
+      router.push('/')
     } catch (error) {
-      setError({ error: error instanceof Error ? error.message : 'An error occurred' })
+      console.error('Auth error:', error)
+      setError({ 
+        error: error instanceof Error 
+          ? error.message 
+          : 'An error occurred during authentication'
+      })
     } finally {
       setLoading(false)
     }
