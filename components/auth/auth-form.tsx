@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
-import { FormMessage } from '@/components/form-message'
+import { FormMessage, type Message } from '@/components/form-message'
 
 interface AuthFormProps {
   type: 'sign-in' | 'sign-up'
@@ -16,7 +16,7 @@ interface AuthFormProps {
 export function AuthForm({ type }: AuthFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<Message | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -45,7 +45,7 @@ export function AuthForm({ type }: AuthFormProps) {
       }
       router.refresh()
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred')
+      setError({ error: error instanceof Error ? error.message : 'An error occurred' })
     } finally {
       setLoading(false)
     }
@@ -74,7 +74,7 @@ export function AuthForm({ type }: AuthFormProps) {
           placeholder="••••••••"
         />
       </div>
-      {error && <FormMessage type="error" message={error} />}
+      {error && <FormMessage message={error} />}
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? 'Loading...' : type === 'sign-up' ? 'Sign Up' : 'Sign In'}
       </Button>
