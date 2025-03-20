@@ -20,40 +20,48 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: urlSchema,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase anon key is required'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'Supabase service role key is required'),
-  DATABASE_URL: urlSchema,
-  SUPABASE_TRANSACTION_POOLER_URL: urlSchema,
+  POSTGRES_URL: urlSchema,
+  POSTGRES_URL_NON_POOLING: urlSchema,
+  POSTGRES_PRISMA_URL: urlSchema,
+  POSTGRES_HOST: z.string().min(1, 'Postgres host is required'),
+  POSTGRES_PASSWORD: z.string().min(1, 'Postgres password is required'),
+  POSTGRES_DATABASE: z.string().min(1, 'Postgres database is required'),
+  SUPABASE_JWT_SECRET: z.string().min(1, 'Supabase JWT secret is required'),
 
-  // OpenAI Configuration
-  OPENAI_API_KEY: z.string().min(1, 'OpenAI API key is required'),
+  // OpenAI Configuration (optional in production)
+  OPENAI_API_KEY: z.string().min(1, 'OpenAI API key is required').optional(),
 
   // Application Configuration
   NEXT_PUBLIC_APP_URL: urlSchema.default('http://localhost:3000'),
   NEXT_PUBLIC_APP_NAME: z.string().min(1, 'App name is required').default('DevFlow'),
   PORT: portSchema.default('3000'),
 
-  // API Rate Limiting
+  // API Rate Limiting (with defaults)
   API_RATE_LIMIT: z
     .string()
     .transform((val) => parseInt(val, 10))
-    .refine((val) => !isNaN(val) && val > 0, 'Rate limit must be a positive number'),
+    .refine((val) => !isNaN(val) && val > 0, 'Rate limit must be a positive number')
+    .default('100'),
   API_RATE_LIMIT_WINDOW_MS: z
     .string()
     .transform((val) => parseInt(val, 10))
-    .refine((val) => !isNaN(val) && val > 0, 'Rate window must be a positive number'),
+    .refine((val) => !isNaN(val) && val > 0, 'Rate window must be a positive number')
+    .default('60000'),
 
-  // Security Configuration
-  JWT_SECRET: z.string().min(1, 'JWT secret is required'),
-  COOKIE_SECRET: z.string().min(1, 'Cookie secret is required'),
+  // Security Configuration (using Supabase JWT secret)
+  JWT_SECRET: z.string().min(1, 'JWT secret is required').default(() => process.env['SUPABASE_JWT_SECRET'] || ''),
+  COOKIE_SECRET: z.string().min(1, 'Cookie secret is required').default(() => process.env['SUPABASE_JWT_SECRET'] || ''),
   SESSION_LIFETIME: z
     .string()
     .transform((val) => parseInt(val, 10))
-    .refine((val) => !isNaN(val) && val > 0, 'Session lifetime must be a positive number'),
-  CORS_ORIGINS: z.string().transform((val) => val.split(',').map((origin) => origin.trim())),
+    .refine((val) => !isNaN(val) && val > 0, 'Session lifetime must be a positive number')
+    .default('86400'),
+  CORS_ORIGINS: z.string().transform((val) => val.split(',').map((origin) => origin.trim())).default('*'),
 
-  // Logging Configuration
+  // Logging Configuration (with defaults)
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
   LOG_FORMAT: z.enum(['json', 'text']).default('json'),
-  LOG_FILE_PATH: z.string().min(1, 'Log file path is required'),
+  LOG_FILE_PATH: z.string().min(1, 'Log file path is required').default('/tmp/app.log'),
 });
 
 // Create a type for the validated environment
@@ -76,8 +84,8 @@ function createConfig(env: ValidatedEnv) {
       url: env.NEXT_PUBLIC_SUPABASE_URL,
       anonKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
-      databaseUrl: env.DATABASE_URL,
-      transactionPoolerUrl: env.SUPABASE_TRANSACTION_POOLER_URL,
+      databaseUrl: env.POSTGRES_URL,
+      transactionPoolerUrl: env.POSTGRES_URL_NON_POOLING,
     },
     openai: {
       apiKey: env.OPENAI_API_KEY,
