@@ -1,33 +1,42 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClientType } from './types';
+import { serverLogger } from '@/lib/logger';
 
-export const createClient = async () => {
-  const cookieStore = await cookies()
+// Load environment variables with fallback
+const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL'];
+const supabaseServiceKey = process.env['SUPABASE_SERVICE_ROLE_KEY'];
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        async get(name: string) {
-          const cookie = await cookieStore.get(name)
-          return cookie?.value
-        },
-        async set(name: string, value: string, options: CookieOptions) {
-          try {
-            await cookieStore.set({ name, value, ...options })
-          } catch (error) {
-            // Handle cookie errors in development
-          }
-        },
-        async remove(name: string, options: CookieOptions) {
-          try {
-            await cookieStore.set({ name, value: '', ...options })
-          } catch (error) {
-            // Handle cookie errors in development
-          }
-        },
-      },
-    }
-  )
-} 
+if (!supabaseUrl || !supabaseServiceKey) {
+  serverLogger.error('Missing Supabase environment variables', {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseServiceKey,
+  });
+  throw new Error('Missing Supabase environment variables. Please check your .env.local file.');
+}
+
+// Create Supabase client with service role key
+export const supabase: SupabaseClientType = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false,
+  },
+  db: {
+    schema: 'public',
+  },
+  global: {
+    headers: {
+      'x-client-info': 'supabase-js/2.39.3',
+    },
+  },
+});
+
+// Export a function to get the client instance with error handling
+export const getSupabaseClient = () => {
+  try {
+    return supabase;
+  } catch (error) {
+    serverLogger.error('Failed to get Supabase client', { error });
+    throw new Error('Failed to initialize Supabase client');
+  }
+};

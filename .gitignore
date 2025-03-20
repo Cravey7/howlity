@@ -3,12 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+.pnp.js
 
 # testing
 /coverage
@@ -32,6 +27,9 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.development
+.env.test
+.env.production
 
 # vercel
 .vercel
@@ -40,5 +38,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Supabase
-/supabase/supabase/.temp/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

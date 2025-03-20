@@ -28,7 +28,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger to automatically update updated_at
+-- Drop existing trigger if it exists
+DROP TRIGGER IF EXISTS handle_users_updated_at ON public.users;
+
+-- Create the trigger
 CREATE TRIGGER handle_users_updated_at
     BEFORE UPDATE ON public.users
     FOR EACH ROW

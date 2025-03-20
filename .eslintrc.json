@@ -1,14 +1,24 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
-  "root": true,
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
+  "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "@typescript-eslint/no-unused-vars": "warn",
+    "prettier/prettier": ["error"],
     "@typescript-eslint/no-explicit-any": "warn",
-    "react/no-unescaped-entities": "off"
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "react/jsx-key": "error",
+    "curly": ["error", "all"],
+    "@next/next/no-html-link-for-pages": "off",
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "@typescript-eslint/no-empty-interface": "off"
   }
-} 
+}
