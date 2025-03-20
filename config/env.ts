@@ -20,12 +20,6 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: urlSchema,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase anon key is required'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'Supabase service role key is required'),
-  POSTGRES_URL: urlSchema,
-  POSTGRES_URL_NON_POOLING: urlSchema,
-  POSTGRES_PRISMA_URL: urlSchema,
-  POSTGRES_HOST: z.string().min(1, 'Postgres host is required'),
-  POSTGRES_PASSWORD: z.string().min(1, 'Postgres password is required'),
-  POSTGRES_DATABASE: z.string().min(1, 'Postgres database is required'),
   SUPABASE_JWT_SECRET: z.string().min(1, 'Supabase JWT secret is required'),
 
   // OpenAI Configuration (optional in production)
@@ -84,8 +78,6 @@ function createConfig(env: ValidatedEnv) {
       url: env.NEXT_PUBLIC_SUPABASE_URL,
       anonKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
-      databaseUrl: env.POSTGRES_URL,
-      transactionPoolerUrl: env.POSTGRES_URL_NON_POOLING,
     },
     openai: {
       apiKey: env.OPENAI_API_KEY,
