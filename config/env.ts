@@ -20,7 +20,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: urlSchema,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase anon key is required'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'Supabase service role key is required'),
-  SUPABASE_JWT_SECRET: z.string().min(1, 'Supabase JWT secret is required'),
+  SUPABASE_JWT_SECRET: z.string().min(1, 'Supabase JWT secret is required').optional(),
 
   // OpenAI Configuration (optional in production)
   OPENAI_API_KEY: z.string().min(1, 'OpenAI API key is required').optional(),
@@ -43,8 +43,8 @@ const envSchema = z.object({
     .default('60000'),
 
   // Security Configuration (using Supabase JWT secret)
-  JWT_SECRET: z.string().min(1, 'JWT secret is required').default(() => process.env['SUPABASE_JWT_SECRET'] || ''),
-  COOKIE_SECRET: z.string().min(1, 'Cookie secret is required').default(() => process.env['SUPABASE_JWT_SECRET'] || ''),
+  JWT_SECRET: z.string().min(1, 'JWT secret is required').default(() => process.env['SUPABASE_JWT_SECRET'] || 'default-jwt-secret'),
+  COOKIE_SECRET: z.string().min(1, 'Cookie secret is required').default(() => process.env['SUPABASE_JWT_SECRET'] || 'default-cookie-secret'),
   SESSION_LIFETIME: z
     .string()
     .transform((val) => parseInt(val, 10))
